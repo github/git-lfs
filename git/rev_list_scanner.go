@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -247,6 +249,10 @@ func revListArgs(include, exclude []string, opt *ScanRefsOptions) (io.Reader, []
 	case ScanAllMode:
 		args = append(args, "--all")
 	case ScanRangeToRemoteMode:
+		depth, _ := strconv.Atoi(os.Getenv("GIT_LFS_MAX_SCAN_DEPTH"))
+		if depth > 0 {
+			args = append(args, fmt.Sprintf("-%d", depth))
+		}
 		args = append(args, "--ignore-missing")
 		if len(opt.SkippedRefs) == 0 {
 			args = append(args, "--not", "--remotes="+opt.Remote)
