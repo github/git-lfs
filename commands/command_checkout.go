@@ -145,10 +145,10 @@ func whichCheckout() (stage git.IndexStage, err error) {
 }
 
 // Parameters are filters
-// firstly convert any pathspecs to the root of the repo, in case this is being
-// executed in a sub-folder
+// firstly convert any pathspecs to patterns relative to the root of the repo,
+// in case this is being executed in a sub-folder
 func rootedPaths(args []string) []string {
-	pathConverter, err := lfs.NewCurrentToRepoPathConverter(cfg)
+	pathConverter, err := lfs.NewCurrentToRepoPatternConverter(cfg)
 	if err != nil {
 		Panic(err, "Could not checkout")
 	}

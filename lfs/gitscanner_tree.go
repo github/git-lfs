@@ -203,7 +203,7 @@ func catFileBatchTreeForPointers(treeblobs *TreeBlobChannelWrapper, gitEnv, osEn
 	for _, path := range paths {
 		// Convert all separators to `/` before creating a pattern to
 		// avoid characters being escaped in situations like `subtree\*.md`
-		patterns = append(patterns, filepathfilter.NewPattern(filepath.ToSlash(path.Path), filepathfilter.Strict(true)))
+		patterns = append(patterns, filepathfilter.NewPattern(filepath.ToSlash(path.Path)))
 	}
 
 	return pointers, filepathfilter.NewFromPatterns(patterns, nil), nil
