@@ -204,10 +204,14 @@ func filterCommand(cmd *cobra.Command, args []string) {
 	}
 
 	if len(malformed) > 0 {
-		fmt.Fprintf(os.Stderr, "Encountered %d file(s) that should have been pointers, but weren't:\n", len(malformed))
+		fmt.Fprintf(os.Stderr, "Encountered %d file(s) that should have been Git LFS pointers, but weren't:\n", len(malformed))
+
 		for _, m := range malformed {
 			fmt.Fprintf(os.Stderr, "\t%s\n", m)
 		}
+
+		fmt.Fprintf(os.Stderr, "\nType: `git lfs ls-files` to see which files are in the Git LFS index.\n");
+		fmt.Fprintf(os.Stderr, "\nSee: `git lfs help migrate` for migrating files to the Git LFS index.\n");
 	}
 
 	if len(malformedOnWindows) > 0 && cfg.Git.Bool("lfs.largefilewarning", true) {
