@@ -7,19 +7,14 @@ import (
 )
 
 func TestPatternMatch(t *testing.T) {
-	for _, wildcard := range []string{`*`, `.`, `./`, `.\`} {
-		assertPatternMatch(t, wildcard,
-			"a",
-			"a/",
-			"a.a",
-			"a/b",
-			"a/b/",
-			"a/b.b",
-			"a/b/c",
-			"a/b/c/",
-			"a/b/c.c",
-		)
-	}
+	assertPatternMatch(t, "*",
+		"a",
+		"a.a",
+		"a/b",
+		"a/b.b",
+		"a/b/c",
+		"a/b/c.c",
+	)
 
 	assertPatternMatch(t, "filename.txt", "filename.txt")
 	assertPatternMatch(t, "*.txt", "filename.txt")
@@ -55,15 +50,18 @@ func TestPatternMatch(t *testing.T) {
 	assertPatternMatch(t, "sub",
 		"sub/",
 		"sub",
-		"sub/filename.txt",
 		"top/sub/",
 		"top/sub",
+	)
+	refutePatternMatch(t, "sub",
+		"sub/filename.txt",
 		"top/sub/filename.txt",
 	)
 
-	assertPatternMatch(t, "sub/", "sub/filename.txt", "top/sub/filename.txt")
-	assertPatternMatch(t, "/sub", "sub/", "sub", "sub/filename.txt")
-	assertPatternMatch(t, "/sub/", "sub/filename.txt")
+	refutePatternMatch(t, "sub/", "sub/filename.txt", "top/sub/filename.txt")
+	assertPatternMatch(t, "/sub", "sub/", "sub")
+	refutePatternMatch(t, "/sub", "sub/filename.txt")
+	refutePatternMatch(t, "/sub/", "sub/filename.txt")
 	refutePatternMatch(t, "/sub", "subfilename.txt", "top/sub/", "top/sub", "top/sub/filename.txt")
 	refutePatternMatch(t, "sub", "subfilename.txt")
 	refutePatternMatch(t, "sub/", "subfilename.txt")
@@ -71,18 +69,21 @@ func TestPatternMatch(t *testing.T) {
 
 	// nested path
 	assertPatternMatch(t, "top/sub",
-		"top/sub/filename.txt",
 		"top/sub/",
 		"top/sub",
-		"root/top/sub/filename.txt",
+	)
+	refutePatternMatch(t, "top/sub",
+		"top/sub/filename.txt",
 		"root/top/sub/",
 		"root/top/sub",
+		"root/top/sub/filename.txt",
 	)
-	assertPatternMatch(t, "top/sub/", "top/sub/filename.txt")
-	assertPatternMatch(t, "top/sub/", "root/top/sub/filename.txt")
+	refutePatternMatch(t, "top/sub/", "top/sub/filename.txt")
+	refutePatternMatch(t, "top/sub/", "root/top/sub/filename.txt")
 
-	assertPatternMatch(t, "/top/sub", "top/sub/", "top/sub", "top/sub/filename.txt")
-	assertPatternMatch(t, "/top/sub/", "top/sub/filename.txt")
+	assertPatternMatch(t, "/top/sub", "top/sub/", "top/sub")
+	refutePatternMatch(t, "/top/sub", "top/sub/filename.txt")
+	refutePatternMatch(t, "/top/sub/", "top/sub/filename.txt")
 
 	refutePatternMatch(t, "top/sub", "top/subfilename.txt")
 	refutePatternMatch(t, "top/sub/", "top/subfilename.txt")
@@ -101,11 +102,6 @@ func TestPatternMatch(t *testing.T) {
 	// Absolute
 	assertPatternMatch(t, "*.dat", "/path/to/sub/.git/test.dat")
 	assertPatternMatch(t, "**/.git", "/path/to/sub/.git")
-
-	// Match anything
-	assertPatternMatch(t, ".", "path.txt")
-	assertPatternMatch(t, "./", "path.txt")
-	assertPatternMatch(t, ".\\", "path.txt")
 }
 
 func assertPatternMatch(t *testing.T, pattern string, filenames ...string) {

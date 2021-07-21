@@ -49,7 +49,7 @@ begin_test "fetch unclean paths with include filter in gitconfig"
   cd clone
   rm -rf .git/lfs/objects
 
-  git config "lfs.fetchinclude" "dir/"
+  git config "lfs.fetchinclude" "dir/**"
   git lfs fetch
   assert_local_object "$contents_oid" 1
 )
@@ -62,7 +62,7 @@ begin_test "fetch unclean paths with exclude filter in gitconfig"
   rm -rf .git/lfs/objects
   git config --unset "lfs.fetchinclude"
 
-  git config "lfs.fetchexclude" "dir/"
+  git config "lfs.fetchexclude" "dir/**"
   git lfs fetch
   refute_local_object "$contents_oid"
 )
@@ -77,7 +77,7 @@ begin_test "fetch unclean paths with include filter in cli"
   git config --unset "lfs.fetchexclude"
 
   rm -rf .git/lfs/objects
-  git lfs fetch -I="dir/"
+  git lfs fetch -I="dir/**"
   assert_local_object "$contents_oid" 1
 )
 end_test
@@ -88,7 +88,7 @@ begin_test "fetch unclean paths with exclude filter in cli"
   cd clone
   rm -rf .git/lfs/objects
 
-  git lfs fetch -X="dir/"
+  git lfs fetch -X="dir/**"
   refute_local_object "$contents_oid"
 )
 end_test

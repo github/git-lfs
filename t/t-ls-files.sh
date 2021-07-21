@@ -224,7 +224,7 @@ begin_test "ls-files: --exclude"
   git add *.gitattributes a.dat b.dat dir/c.dat
   git commit -m "initial commit"
 
-  git lfs ls-files --exclude="dir/" 2>&1 | tee ls-files.log
+  git lfs ls-files --exclude="dir/**" 2>&1 | tee ls-files.log
 
   [ "0" -eq "$(grep -c "dir" ls-files.log)" ]
   [ "2" -eq "$(grep -c "\.dat" ls-files.log)" ]

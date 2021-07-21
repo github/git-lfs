@@ -107,9 +107,8 @@ func (f *Filter) Allows(filename string) bool {
 }
 
 type wm struct {
-	w    *wildmatch.Wildmatch
-	p    string
-	dirs bool
+	w *wildmatch.Wildmatch
+	p string
 }
 
 func (w *wm) Match(filename string) bool {
@@ -134,73 +133,19 @@ type patternOptions struct {
 
 type patternOption func(*patternOptions)
 
-// Strict is an option representing whether to strictly match wildmatch patterns
-// the way Git does.  If disabled, additional modifications are made to patterns
-// for backwards compatibility.
-func Strict(val bool) patternOption {
-	return func(args *patternOptions) {
-		args.strict = val
-	}
-}
-
 func NewPattern(p string, setters ...patternOption) Pattern {
 	args := &patternOptions{strict: false}
 	for _, setter := range setters {
 		setter(args)
 	}
 
-	pp := p
-
-	dirs := strings.Contains(pp, string(sep))
-
-	if !args.strict {
-
-		// Special case: the below patterns match anything according to existing
-		// behavior.
-		switch pp {
-		case `*`, `.`, `./`, `.\`:
-			pp = join("**", "*")
-		}
-
-		dirs = strings.Contains(pp, string(sep))
-		rooted := strings.HasPrefix(pp, string(sep))
-		wild := strings.Contains(pp, "*")
-
-		if !dirs && !wild {
-			// Special case: if pp is a literal string (optionally including
-			// a character class), rewrite it is a substring match.
-			pp = join("**", pp, "**")
-		} else {
-			if dirs && !rooted {
-				// Special case: if there are any directory separators,
-				// rewrite "pp" as a substring match.
-				if !wild {
-					pp = join("**", pp, "**")
-				}
-			} else {
-				if rooted {
-					// Special case: if there are not any directory
-					// separators, rewrite "pp" as a substring
-					// match.
-					pp = join(pp, "**")
-				} else {
-					// Special case: if there are not any directory
-					// separators, rewrite "pp" as a substring
-					// match.
-					pp = join("**", pp)
-				}
-			}
-		}
-	}
-	tracerx.Printf("filepathfilter: rewrite %q as %q (strict: %v)", p, pp, args.strict)
-
 	return &wm{
 		p: p,
 		w: wildmatch.NewWildmatch(
-			pp,
+			p,
 			wildmatch.SystemCase,
+			wildmatch.Basename,
 		),
-		dirs: dirs,
 	}
 }
 

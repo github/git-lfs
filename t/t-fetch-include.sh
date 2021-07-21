@@ -57,7 +57,7 @@ begin_test "fetch: include first matching file"
 
   git lfs ls-files
 
-  git lfs fetch --include=big/a
+  git lfs fetch --include=big/a/**
 
   assert_local_object "$contents_oid" "8"
 )
@@ -78,7 +78,7 @@ begin_test "fetch: include second matching file"
 
   git lfs ls-files
 
-  git lfs fetch --include=big/b
+  git lfs fetch --include=big/b/**
 
   assert_local_object "$contents_oid" "8"
 )

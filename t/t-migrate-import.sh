@@ -630,7 +630,7 @@ begin_test "migrate import (prefix include(s))"
 (
   set -e
 
-  includes="foo/bar/baz foo/**/baz/a.txt *.txt"
+  includes="foo/bar/baz/** foo/**/baz/a.txt *.txt"
   for include in $includes; do
     setup_single_local_branch_deep_trees
 
