@@ -173,6 +173,40 @@ func (p *currentToRepoPathConverter) Convert(filename string) string {
 	return filepath.ToSlash(reltoroot)
 }
 
+// Convert filenames expressed relative to the current directory to be
+// relative to the repo root. Useful when calling git with arguments that requires them
+// to be rooted but the user is in a subdir of their repo & expects to use relative args
+// Pass in a channel which you will fill with relative files & receive a channel which will get results
+func NewCurrentToRepoPatternConverter(cfg *config.Configuration) (PathConverter, error) {
+	r, c, p, err := pathConverterArgs(cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	return &currentToRepoPatternConverter{
+		c: &currentToRepoPathConverter{
+			repoDir:     r,
+			currDir:     c,
+			passthrough: p,
+		},
+	}, nil
+}
+
+type currentToRepoPatternConverter struct {
+	c *currentToRepoPathConverter
+}
+
+func (p *currentToRepoPatternConverter) Convert(filename string) string {
+	pattern := p.c.Convert(filename)
+	if st, err := os.Stat(filename); err == nil && st.IsDir() {
+		pattern += "/**"
+	}
+	if strings.HasPrefix(pattern, "./") {
+		pattern = pattern[2:]
+	}
+	return pattern
+}
+
 func pathConverterArgs(cfg *config.Configuration) (string, string, bool, error) {
 	currDir, err := os.Getwd()
 	if err != nil {
