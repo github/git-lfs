@@ -1,6 +1,7 @@
 package tq
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/git-lfs/git-lfs/lfsapi"
@@ -37,6 +38,8 @@ func verifyUpload(c *lfsapi.Client, remote string, t *Transfer) error {
 
 	req.Header.Set("Content-Type", "application/vnd.git-lfs+json")
 	req.Header.Set("Accept", "application/vnd.git-lfs+json")
+	req.Header.Set("Content-Disposition", fmt.Sprintf("attachment; filename=%q", t.Name))
+
 	for key, value := range action.Header {
 		req.Header.Set(key, value)
 	}
