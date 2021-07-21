@@ -419,6 +419,11 @@ including and limited to:
 - lfs.allowincompletepush
 - lfs.fetchexclude
 - lfs.fetchinclude
+- lfs.fetchrecentrefsdays
+- lfs.fetchrecentremoterefs
+- lfs.fetchrecentcommitsdays
+- lfs.fetchrecentalways
+- lfs.pruneoffsetdays
 - lfs.gitprotocol
 - lfs.locksverify
 - lfs.pushurl
