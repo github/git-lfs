@@ -498,6 +498,13 @@ func CanonicalizePath(path string, missingOk bool) (string, error) {
 		if err != nil && os.IsNotExist(err) && missingOk {
 			return path, nil
 		}
+		if err != nil && runtime.GOOS == "windows" {
+			// As EvalSymlinks is broken on windows
+			// it may fail even if the path is valid, so if the file exists we should use it
+			if _, err1 := os.Stat(path); !os.IsNotExist(err1) {
+				return path, nil
+			}
+		}
 		return result, err
 	}
 	return "", nil
