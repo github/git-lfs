@@ -18,6 +18,7 @@ API Specification:
 
 Current transfer adapters include:
   * [Basic](./basic-transfers.md)
+  * [Static](./static-transfers.md)
 
 Experimental transfer adapters include:
   * Tus.io (upload only)
