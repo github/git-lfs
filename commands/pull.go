@@ -67,12 +67,12 @@ func (c *singleCheckout) Run(p *lfs.WrappedPointer) {
 	// Check the content - either missing or still this pointer (not exist is ok)
 	filepointer, err := lfs.DecodePointerFromFile(cwdfilepath)
 	if err != nil && !os.IsNotExist(err) {
-		if errors.IsNotAPointerError(err) || errors.IsBadPointerKeyError(err) {
+		if errors.IsNotAPointerError(err) {
 			// File has non-pointer content, leave it alone
 			return
 		}
 
-		LoggedError(err, "Checkout error: %s", err)
+		LoggedError(err, "Checkout error: %s\n File: %q \n ", err, cwdfilepath)
 		return
 	}
 
